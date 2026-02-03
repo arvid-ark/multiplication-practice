@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Multiplication Practice</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 24px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 20px 48px;
+            font-size: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .problem {
+            font-size: 48px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .progress {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .answer-display {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 36px;
+            font-weight: 600;
+            color: #333;
+            min-height: 70px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .answer-display.empty {
+            color: #ccc;
+        }
+
+        .answer-display.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .answer-display.wrong {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .feedback-inline {
+            font-size: 18px;
+            min-height: 28px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .feedback-inline.correct {
+            color: #2e7d32;
+        }
+
+        .feedback-inline.wrong {
+            color: #c62828;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .key {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .key:active {
+            background: #ddd;
+        }
+
+        .key.delete {
+            background: #ffebee;
+            color: #e53935;
+        }
+
+        .key.enter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .score {
+            font-size: 72px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .score-label {
+            font-size: 20px;
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        .emoji {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>Multiplication Practice</h1>
+            <p style="color: #666; margin-bottom: 32px;">Practice all multiplications from 1×1 to 10×10</p>
+            <button class="btn" onclick="startGame()">Start</button>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen">
+            <div class="progress">Question <span id="current-num">1</span> of 100</div>
+            <div class="problem" id="problem">7 × 8</div>
+            <div class="answer-display empty" id="answer-display">?</div>
+            <div class="feedback-inline" id="feedback-inline">&nbsp;</div>
+            <div class="keypad">
+                <button class="key" onclick="pressKey('1')">1</button>
+                <button class="key" onclick="pressKey('2')">2</button>
+                <button class="key" onclick="pressKey('3')">3</button>
+                <button class="key" onclick="pressKey('4')">4</button>
+                <button class="key" onclick="pressKey('5')">5</button>
+                <button class="key" onclick="pressKey('6')">6</button>
+                <button class="key" onclick="pressKey('7')">7</button>
+                <button class="key" onclick="pressKey('8')">8</button>
+                <button class="key" onclick="pressKey('9')">9</button>
+                <button class="key delete" onclick="pressDelete()">⌫</button>
+                <button class="key" onclick="pressKey('0')">0</button>
+                <button class="key enter" onclick="submitAnswer()">Enter</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="emoji" id="result-emoji">🎉</div>
+            <h2>Finished!</h2>
+            <div class="score" id="final-score">85</div>
+            <div class="score-label">out of 100 correct</div>
+            <button class="btn" onclick="startGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let problems = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let currentAnswer = '';
+        let isShowingFeedback = false;
+
+        function generateProblems() {
+            problems = [];
+            for (let a = 1; a <= 10; a++) {
+                for (let b = 1; b <= 10; b++) {
+                    problems.push({ a, b, answer: a * b });
+                }
+            }
+            // Fisher-Yates shuffle
+            for (let i = problems.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [problems[i], problems[j]] = [problems[j], problems[i]];
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() {
+            generateProblems();
+            currentIndex = 0;
+            correctCount = 0;
+            currentAnswer = '';
+            showQuestion();
+            showScreen('question-screen');
+        }
+
+        function showQuestion() {
+            const problem = problems[currentIndex];
+            document.getElementById('problem').textContent = `${problem.a} × ${problem.b}`;
+            document.getElementById('current-num').textContent = currentIndex + 1;
+            currentAnswer = '';
+            isShowingFeedback = false;
+            updateAnswerDisplay();
+            document.getElementById('feedback-inline').innerHTML = '&nbsp;';
+            document.getElementById('feedback-inline').className = 'feedback-inline';
+            document.getElementById('answer-display').className = 'answer-display empty';
+        }
+
+        function updateAnswerDisplay() {
+            const display = document.getElementById('answer-display');
+            if (currentAnswer === '') {
+                display.textContent = '?';
+                display.classList.add('empty');
+            } else {
+                display.textContent = currentAnswer;
+                display.classList.remove('empty');
+            }
+        }
+
+        function pressKey(num) {
+            if (isShowingFeedback) return;
+            if (currentAnswer.length < 3) {
+                currentAnswer += num;
+                updateAnswerDisplay();
+            }
+        }
+
+        function pressDelete() {
+            if (isShowingFeedback) return;
+            currentAnswer = currentAnswer.slice(0, -1);
+            updateAnswerDisplay();
+        }
+
+        function submitAnswer() {
+            if (currentAnswer === '' || isShowingFeedback) return;
+
+            const problem = problems[currentIndex];
+            const userAnswer = parseInt(currentAnswer, 10);
+            const isCorrect = userAnswer === problem.answer;
+            isShowingFeedback = true;
+
+            if (isCorrect) {
+                correctCount++;
+            }
+
+            const answerDisplay = document.getElementById('answer-display');
+            const feedbackInline = document.getElementById('feedback-inline');
+
+            if (isCorrect) {
+                answerDisplay.className = 'answer-display correct';
+                feedbackInline.textContent = '✓ Correct!';
+                feedbackInline.className = 'feedback-inline correct';
+                setTimeout(nextQuestion, 400);
+            } else {
+                answerDisplay.className = 'answer-display wrong';
+                feedbackInline.textContent = `✗ ${problem.a} × ${problem.b} = ${problem.answer}`;
+                feedbackInline.className = 'feedback-inline wrong';
+                setTimeout(nextQuestion, 2000);
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= problems.length) {
+                showResults();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('final-score').textContent = correctCount;
+
+            let emoji = '🎉';
+            if (correctCount === 100) emoji = '🏆';
+            else if (correctCount >= 90) emoji = '🌟';
+            else if (correctCount >= 70) emoji = '😊';
+            else if (correctCount >= 50) emoji = '👍';
+            else emoji = '💪';
+
+            document.getElementById('result-emoji').textContent = emoji;
+            showScreen('results-screen');
+        }
+
+        // Keyboard support for desktop testing
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('question-screen').classList.contains('active')) return;
+            if (isShowingFeedback) return;
+
+            if (e.key >= '0' && e.key <= '9') {
+                pressKey(e.key);
+            } else if (e.key === 'Backspace') {
+                pressDelete();
+            } else if (e.key === 'Enter') {
+                submitAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
