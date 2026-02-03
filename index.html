@@ -14,27 +14,33 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            height: 100vh;
+            height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 12px;
+            overflow: hidden;
         }
 
         .container {
             background: white;
             border-radius: 24px;
-            padding: 32px 24px;
+            padding: 24px 20px;
             width: 100%;
             max-width: 400px;
+            height: 100%;
+            max-height: 700px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
             color: #333;
-            font-size: 28px;
-            margin-bottom: 24px;
+            font-size: 24px;
+            margin-bottom: 16px;
         }
 
         .screen {
@@ -42,7 +48,10 @@
         }
 
         .screen.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
         }
 
         .btn {
@@ -50,8 +59,8 @@
             color: white;
             border: none;
             border-radius: 16px;
-            padding: 20px 48px;
-            font-size: 24px;
+            padding: 16px 40px;
+            font-size: 22px;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.1s, box-shadow 0.1s;
@@ -66,13 +75,13 @@
             font-size: 48px;
             font-weight: 700;
             color: #333;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .progress {
             color: #888;
-            font-size: 16px;
-            margin-bottom: 16px;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
 
         .answer-display {
@@ -82,8 +91,8 @@
             font-size: 36px;
             font-weight: 600;
             color: #333;
-            min-height: 70px;
-            margin-bottom: 24px;
+            min-height: 64px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -105,8 +114,8 @@
 
         .feedback-inline {
             font-size: 18px;
-            min-height: 28px;
-            margin-bottom: 16px;
+            min-height: 24px;
+            margin-bottom: 12px;
             font-weight: 600;
         }
 
@@ -121,21 +130,26 @@
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            flex: 1;
+            min-height: 0;
         }
 
         .key {
             background: #f0f0f0;
             border: none;
             border-radius: 12px;
-            padding: 20px;
+            padding: 0;
             font-size: 28px;
             font-weight: 600;
             color: #333;
             cursor: pointer;
             transition: background 0.1s;
             -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .key:active {
@@ -154,36 +168,36 @@
         }
 
         .results h2 {
-            font-size: 32px;
+            font-size: 28px;
             color: #333;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .score {
-            font-size: 72px;
+            font-size: 64px;
             font-weight: 700;
             color: #667eea;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .score-label {
-            font-size: 20px;
+            font-size: 18px;
             color: #888;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
         .emoji {
-            font-size: 64px;
-            margin-bottom: 24px;
+            font-size: 56px;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Start Screen -->
-        <div id="start-screen" class="screen active">
+        <div id="start-screen" class="screen active" style="justify-content: center;">
             <h1>Multiplication Practice</h1>
-            <p style="color: #666; margin-bottom: 32px;">Practice all multiplications from 1×1 to 10×10</p>
+            <p style="color: #666; margin-bottom: 24px;">Practice all multiplications from 1×1 to 10×10</p>
             <button class="btn" onclick="startGame()">Start</button>
         </div>
 
@@ -210,7 +224,7 @@
         </div>
 
         <!-- Results Screen -->
-        <div id="results-screen" class="screen">
+        <div id="results-screen" class="screen" style="justify-content: center;">
             <div class="emoji" id="result-emoji">🎉</div>
             <h2>Finished!</h2>
             <div class="score" id="final-score">85</div>
