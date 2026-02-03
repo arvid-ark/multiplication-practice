@@ -82,7 +82,9 @@
             margin-bottom: 16px;
         }
 
-        .progress {
+        .progress-row {
+            display: flex;
+            justify-content: space-between;
             color: #888;
             font-size: 14px;
             margin-bottom: 8px;
@@ -187,6 +189,12 @@
         .score-label {
             font-size: 18px;
             color: #888;
+            margin-bottom: 8px;
+        }
+
+        .total-time {
+            font-size: 16px;
+            color: #667eea;
             margin-bottom: 24px;
         }
 
@@ -207,7 +215,10 @@
 
         <!-- Question Screen -->
         <div id="question-screen" class="screen">
-            <div class="progress">Question <span id="current-num">1</span> of 100</div>
+            <div class="progress-row">
+                <span>Question <span id="current-num">1</span> of 100</span>
+                <span id="timer">0m 00s</span>
+            </div>
             <div class="problem" id="problem">7 × 8</div>
             <div class="answer-display empty" id="answer-display">?</div>
             <div class="feedback-inline" id="feedback-inline">&nbsp;</div>
@@ -233,6 +244,7 @@
             <h2>Finished!</h2>
             <div class="score" id="final-score">85</div>
             <div class="score-label">out of 100 correct</div>
+            <div class="total-time" id="total-time">in 0m 00s</div>
             <button class="btn" onclick="startGame()">Play Again</button>
         </div>
     </div>
@@ -243,6 +255,8 @@
         let correctCount = 0;
         let currentAnswer = '';
         let isShowingFeedback = false;
+        let startTime = null;
+        let timerInterval = null;
 
         function generateProblems() {
             problems = [];
@@ -263,11 +277,27 @@
             document.getElementById(screenId).classList.add('active');
         }
 
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}m ${seconds.toString().padStart(2, '0')}s`;
+        }
+
+        function updateTimer() {
+            const elapsed = Date.now() - startTime;
+            document.getElementById('timer').textContent = formatTime(elapsed);
+        }
+
         function startGame() {
             generateProblems();
             currentIndex = 0;
             correctCount = 0;
             currentAnswer = '';
+            startTime = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
             showQuestion();
             showScreen('question-screen');
         }
@@ -347,7 +377,11 @@
         }
 
         function showResults() {
+            if (timerInterval) clearInterval(timerInterval);
+            const totalTime = Date.now() - startTime;
+
             document.getElementById('final-score').textContent = correctCount;
+            document.getElementById('total-time').textContent = `in ${formatTime(totalTime)}`;
 
             let emoji = '🎉';
             if (correctCount === 100) emoji = '🏆';
